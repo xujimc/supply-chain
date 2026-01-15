@@ -2,7 +2,6 @@ import { useCallback, useMemo } from 'react';
 import ReactFlow, {
   Background,
   Controls,
-  MiniMap,
   useNodesState,
   useEdgesState,
 } from 'reactflow';
@@ -17,41 +16,102 @@ const NODE_COLORS = {
   customer: '#8b5cf6', // purple
 };
 
+// Seeded random function for consistent "messy" layout
+function seededRandom(seed) {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+
+// Check if two positions are too close (overlapping)
+function isTooClose(pos1, pos2, minDistance = 200) {
+  const dx = pos1.x - pos2.x;
+  const dy = pos1.y - pos2.y;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  return distance < minDistance;
+}
+
+// Adjust positions to avoid overlaps
+function resolveOverlaps(positions) {
+  const minDistance = 200; // Minimum distance between nodes
+  const maxIterations = 50; // Max attempts to resolve overlaps
+
+  for (let iteration = 0; iteration < maxIterations; iteration++) {
+    let hadOverlap = false;
+
+    for (let i = 0; i < positions.length; i++) {
+      for (let j = i + 1; j < positions.length; j++) {
+        if (isTooClose(positions[i], positions[j], minDistance)) {
+          hadOverlap = true;
+
+          // Calculate push direction
+          const dx = positions[i].x - positions[j].x;
+          const dy = positions[i].y - positions[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+
+          // Normalize and push apart
+          const pushX = (dx / distance) * (minDistance - distance) / 2;
+          const pushY = (dy / distance) * (minDistance - distance) / 2;
+
+          positions[i].x += pushX;
+          positions[i].y += pushY;
+          positions[j].x -= pushX;
+          positions[j].y -= pushY;
+        }
+      }
+    }
+
+    // If no overlaps found, we're done
+    if (!hadOverlap) break;
+  }
+
+  return positions;
+}
+
 // Convert graph data to React Flow format
 function convertToReactFlow(graph) {
+  // First pass: calculate initial positions
+  const initialPositions = graph.nodes.map((node) => {
+    const seed = node.id.charCodeAt(node.id.length - 1) * 123 + node.id.charCodeAt(0) * 456;
+
+    // Random X position across wide range
+    let x = seededRandom(seed) * 2000 - 250;
+    const y = seededRandom(seed + 789) * 1000 - 100;
+
+    // Move specific nodes to the right
+    if (node.id === 'S4' || node.id === 'S2' || node.id === 'C8' || node.id === 'C16') {
+      x = x + 800;
+    }
+
+    return { id: node.id, x, y };
+  });
+
+  // Resolve overlaps
+  const adjustedPositions = resolveOverlaps(initialPositions);
+
+  // Second pass: create actual nodes with adjusted positions
   const nodes = graph.nodes.map((node, index) => {
     const affectedEntities = useStore.getState().latestBackboardResponse?.affected_entities || { nodes: [] };
     const isAffected = affectedEntities.nodes?.includes(node.id);
 
-    // Layout: vertical tiers by type with clear separation
-    let yPos = 0;
+    // Get adjusted position for this node
+    const position = adjustedPositions.find(p => p.id === node.id);
+
+    // Emoji by type
     let emoji = '';
     if (node.type === 'supplier') {
-      yPos = 0;
       emoji = '🏭';
     } else if (node.type === 'factory') {
-      yPos = 200;
       emoji = '⚙️';
     } else if (node.type === 'warehouse') {
-      yPos = 400;
       emoji = '📦';
     } else if (node.type === 'customer') {
-      yPos = 600;
       emoji = '🏢';
     }
-
-    // Spread horizontally within tier
-    const tierCounts = { supplier: 4, factory: 4, warehouse: 4, customer: 16 };
-    const tierIndex = graph.nodes.filter(n => n.type === node.type).indexOf(node);
-    const nodeSpacing = 200; // Increased spacing for wider nodes
-    const tierWidth = tierCounts[node.type] * nodeSpacing;
-    const startX = (1400 - tierWidth) / 2; // Center the tier (increased canvas width)
-    const xPos = startX + (tierIndex * nodeSpacing);
 
     return {
       id: node.id,
       type: 'default',
-      position: { x: xPos, y: yPos },
+      position: { x: position.x, y: position.y },
       data: {
         label: (
           <div className="text-center">
@@ -147,13 +207,6 @@ export default function SupplyChainGraph() {
       >
         <Background color="#f0f0f0" />
         <Controls />
-        <MiniMap
-          nodeColor={(node) => {
-            const originalNode = currentGraph.nodes.find(n => n.id === node.id);
-            return NODE_COLORS[originalNode?.type] || '#cbd5e1';
-          }}
-          className="bg-gray-100"
-        />
       </ReactFlow>
     </div>
   );
