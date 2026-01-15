@@ -18,34 +18,37 @@ function KPICard({ title, baselineValue, currentValue, unit, inverse = false, ic
   const percentChange = baselineValue !== 0 ? Math.abs((delta / baselineValue) * 100).toFixed(1) : 0;
 
   return (
-    <div className={`bg-white rounded-xl shadow-lg p-6 border-4 transition-all duration-300 ${
-      isWorse ? 'border-red-500 bg-red-50' :
-      isBetter ? 'border-green-500 bg-green-50' :
-      'border-gray-200'
-    } ${animate ? 'scale-105 shadow-2xl' : ''}`}>
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide">{title}</h3>
-        <span className="text-2xl">{icon}</span>
+    <div className={`bg-gray-900 border-b border-gray-700 p-3 transition-all duration-300 ${
+      isWorse ? 'bg-red-900/20 border-red-800' :
+      isBetter ? 'bg-green-900/20 border-green-800' :
+      ''
+    } ${animate ? 'scale-[1.02]' : ''}`}>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{title}</h3>
+        <span className="text-lg">{icon}</span>
       </div>
 
-      <div className="mb-3">
-        <div className={`text-5xl font-black transition-all duration-500 ${
-          isWorse ? 'text-red-600' : isBetter ? 'text-green-600' : 'text-gray-900'
+      {/* Value */}
+      <div className="mb-2">
+        <div className={`text-2xl font-bold transition-all duration-500 ${
+          isWorse ? 'text-red-400' : isBetter ? 'text-green-400' : 'text-white'
         } ${animate ? 'scale-110' : ''}`}>
           {currentValue}{unit}
         </div>
       </div>
 
+      {/* Baseline & Change */}
       <div className="flex items-center justify-between">
-        <div className="text-xs text-gray-600">
-          Baseline: <span className="font-semibold">{baselineValue}{unit}</span>
+        <div className="text-xs text-gray-500">
+          Base: <span className="text-gray-400">{baselineValue}{unit}</span>
         </div>
 
         {delta !== 0 && (
-          <div className={`flex items-center space-x-1 text-lg font-bold px-3 py-1 rounded-full ${
-            isWorse ? 'bg-red-600 text-white' :
-            isBetter ? 'bg-green-600 text-white' :
-            'bg-gray-200 text-gray-700'
+          <div className={`flex items-center space-x-1 text-xs font-bold px-2 py-0.5 rounded ${
+            isWorse ? 'bg-red-900 text-red-300' :
+            isBetter ? 'bg-green-900 text-green-300' :
+            'bg-gray-700 text-gray-300'
           }`}>
             <span>{isBetter ? '↑' : '↓'}</span>
             <span>{percentChange}%</span>
@@ -53,13 +56,12 @@ function KPICard({ title, baselineValue, currentValue, unit, inverse = false, ic
         )}
       </div>
 
+      {/* Status */}
       {delta !== 0 && (
-        <div className={`mt-3 pt-3 border-t-2 text-sm font-semibold ${
-          isWorse ? 'border-red-300 text-red-700' :
-          isBetter ? 'border-green-300 text-green-700' :
-          'border-gray-300'
+        <div className={`mt-2 text-xs font-semibold ${
+          isWorse ? 'text-red-400' : 'text-green-400'
         }`}>
-          {isWorse ? '⚠️ Performance Degraded' : '✓ Performance Improved'}
+          {isWorse ? '⚠ Degraded' : '✓ Improved'}
         </div>
       )}
     </div>
@@ -81,7 +83,7 @@ export default function KPIStrip() {
   }, [recommendationsAccepted]);
 
   return (
-    <div className={`grid grid-cols-4 gap-6 w-full transition-all duration-500 ${
+    <div className={`flex flex-col transition-all duration-500 ${
       flashAnimation ? 'animate-pulse' : ''
     }`}>
       <KPICard

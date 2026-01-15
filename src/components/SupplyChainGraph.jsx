@@ -136,7 +136,7 @@ export default function SupplyChainGraph() {
   }, [currentGraph, setNodes, setEdges]);
 
   return (
-    <div className="w-full h-full bg-gray-50 rounded-lg border-2 border-gray-300">
+    <div className="w-full h-full bg-white rounded border border-gray-300">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -145,13 +145,14 @@ export default function SupplyChainGraph() {
         fitView
         attributionPosition="bottom-left"
       >
-        <Background />
+        <Background color="#f0f0f0" />
         <Controls />
         <MiniMap
           nodeColor={(node) => {
             const originalNode = currentGraph.nodes.find(n => n.id === node.id);
             return NODE_COLORS[originalNode?.type] || '#cbd5e1';
           }}
+          className="bg-gray-100"
         />
       </ReactFlow>
     </div>

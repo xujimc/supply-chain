@@ -8,9 +8,9 @@ export default function EventButton() {
     <button
       onClick={generateEvent}
       disabled={loading}
-      className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-colors duration-200"
+      className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-semibold py-2 px-4 rounded text-sm transition-colors duration-200"
     >
-      {loading ? 'Generating...' : 'Generate World Event'}
+      {loading ? '⏳ Generating...' : '🌍 Generate Event'}
     </button>
   );
 }
