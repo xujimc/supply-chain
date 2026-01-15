@@ -1,7 +1,7 @@
 // Quick test script to check Backboard API
 import axios from 'axios';
 
-const API_KEY = 'espr_qM-63odsIsSGHzzXuv31KZoNLhAzoldp8vSeUl4mq4U';
+const API_KEY = 'espr_lXOcLqKkZC7CuseG8dhQQkm9ujFCsxLXgC1TipRj37I';
 const BASE_URL = 'https://app.backboard.io/api';
 
 async function testAPI() {

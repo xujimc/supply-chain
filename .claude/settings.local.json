@@ -15,7 +15,12 @@
       "Bash(node test-real-api.js:*)",
       "Bash(npm install:*)",
       "Bash(npm run server:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(node server.js:*)",
+      "Bash(lsof:*)",
+      "Bash(netstat:*)",
+      "Bash(taskkill:*)",
+      "Bash(powershell \"Stop-Process -Id 33272 -Force\")"
     ]
   }
 }
