@@ -1,4 +1,5 @@
 import useStore from '../store/useStore';
+import { baselineNodes } from '../data/baseline';
 
 export default function EventPanel() {
   const latestEvent = useStore(state => state.latestEvent);
@@ -6,6 +7,12 @@ export default function EventPanel() {
   const acceptRecommendations = useStore(state => state.acceptRecommendations);
   const loading = useStore(state => state.loading);
   const recommendationsAccepted = useStore(state => state.recommendationsAccepted);
+
+  // Helper to get node name from ID
+  const getNodeName = (nodeId) => {
+    const node = baselineNodes.find(n => n.id === nodeId);
+    return node ? node.name : nodeId;
+  };
 
   if (!latestEvent) {
     return (
@@ -62,7 +69,9 @@ export default function EventPanel() {
               <div className="space-y-1 text-xs text-gray-400">
                 <div>
                   <span className="text-gray-500">Nodes:</span>{' '}
-                  <span className="text-red-300">{latestBackboardResponse.affected_entities.nodes?.join(', ') || 'None'}</span>
+                  <span className="text-red-300">
+                    {latestBackboardResponse.affected_entities.nodes?.map(getNodeName).join(', ') || 'None'}
+                  </span>
                 </div>
                 <div>
                   <span className="text-gray-500">Routes:</span>{' '}
@@ -76,7 +85,6 @@ export default function EventPanel() {
           {recommendationsAccepted && (
             <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-4 animate-pulse">
               <div className="flex items-center mb-2">
-                <span className="text-2xl mr-2">✅</span>
                 <h4 className="font-bold text-sm text-blue-300">Applied Successfully!</h4>
               </div>
               <p className="text-xs text-blue-400">
@@ -89,7 +97,6 @@ export default function EventPanel() {
           {!recommendationsAccepted && latestBackboardResponse.recommendations && latestBackboardResponse.recommendations.length > 0 && (
             <div className="space-y-3">
               <div className="flex items-center">
-                <span className="text-lg mr-2">💡</span>
                 <h4 className="text-xs font-bold text-green-400 uppercase">Recommendations</h4>
               </div>
               {latestBackboardResponse.recommendations.map((rec, idx) => (
@@ -98,7 +105,6 @@ export default function EventPanel() {
                     <div className="font-bold text-xs text-green-300">
                       {idx + 1}. {rec.action_type?.replace(/_/g, ' ') || 'Action'}
                     </div>
-                    <span className="text-green-400">✓</span>
                   </div>
                   <p className="text-xs text-gray-300 mb-2 leading-relaxed">{rec.rationale}</p>
                   {rec.expected_impact && (
@@ -106,11 +112,11 @@ export default function EventPanel() {
                       <div className="text-xs font-semibold text-green-400 mb-1">Impact:</div>
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div className="text-green-300">
-                          📈 Service: <strong>{rec.expected_impact.service_level_delta_pct > 0 ? '+' : ''}
+                          Service: <strong>{rec.expected_impact.service_level_delta_pct > 0 ? '+' : ''}
                           {rec.expected_impact.service_level_delta_pct}%</strong>
                         </div>
                         <div className="text-green-300">
-                          💰 Cost: <strong>{rec.expected_impact.cost_index_delta_pct > 0 ? '+' : ''}
+                          Cost: <strong>{rec.expected_impact.cost_index_delta_pct > 0 ? '+' : ''}
                           {rec.expected_impact.cost_index_delta_pct}%</strong>
                         </div>
                       </div>
@@ -134,7 +140,7 @@ export default function EventPanel() {
                     Applying...
                   </span>
                 ) : (
-                  '✓ Accept All'
+                  'Accept All'
                 )}
               </button>
             </div>

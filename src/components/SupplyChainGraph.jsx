@@ -96,18 +96,6 @@ function convertToReactFlow(graph) {
     // Get adjusted position for this node
     const position = adjustedPositions.find(p => p.id === node.id);
 
-    // Emoji by type
-    let emoji = '';
-    if (node.type === 'supplier') {
-      emoji = '🏭';
-    } else if (node.type === 'factory') {
-      emoji = '⚙️';
-    } else if (node.type === 'warehouse') {
-      emoji = '📦';
-    } else if (node.type === 'customer') {
-      emoji = '🏢';
-    }
-
     return {
       id: node.id,
       type: 'default',
@@ -115,11 +103,10 @@ function convertToReactFlow(graph) {
       data: {
         label: (
           <div className="text-center">
-            <div className="text-2xl mb-1">{emoji}</div>
-            <div className="font-bold text-sm">{node.id}</div>
-            <div className="text-xs font-semibold text-gray-700">{node.city}</div>
-            <div className="text-xs text-gray-500">{node.country}</div>
-            {isAffected && <div className="text-xs text-red-600 font-bold mt-1">⚠️ DISRUPTED</div>}
+            <div className={`font-bold text-sm ${isAffected ? 'text-gray-900' : 'text-white'}`}>{node.name}</div>
+            <div className={`text-xs font-semibold ${isAffected ? 'text-gray-700' : 'text-white/90'}`}>{node.city}</div>
+            <div className={`text-xs ${isAffected ? 'text-gray-600' : 'text-white/70'}`}>{node.country}</div>
+            {isAffected && <div className="text-xs text-red-700 font-bold mt-1">DISRUPTED</div>}
           </div>
         ),
       },

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import useStore from '../store/useStore';
 
-function KPICard({ title, baselineValue, currentValue, unit, inverse = false, icon }) {
+function KPICard({ title, baselineValue, currentValue, unit, inverse = false }) {
   const delta = currentValue - baselineValue;
   const isWorse = inverse ? delta > 0 : delta < 0;
   const isBetter = inverse ? delta < 0 : delta > 0;
@@ -26,7 +26,6 @@ function KPICard({ title, baselineValue, currentValue, unit, inverse = false, ic
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{title}</h3>
-        <span className="text-lg">{icon}</span>
       </div>
 
       {/* Value */}
@@ -61,7 +60,7 @@ function KPICard({ title, baselineValue, currentValue, unit, inverse = false, ic
         <div className={`mt-2 text-xs font-semibold ${
           isWorse ? 'text-red-400' : 'text-green-400'
         }`}>
-          {isWorse ? '⚠ Degraded' : '✓ Improved'}
+          {isWorse ? 'Degraded' : 'Improved'}
         </div>
       )}
     </div>
@@ -92,7 +91,6 @@ export default function KPIStrip() {
         currentValue={currentKPIs.service_level}
         unit="%"
         inverse={false}
-        icon="📈"
       />
       <KPICard
         title="Stockout Risk"
@@ -100,7 +98,6 @@ export default function KPIStrip() {
         currentValue={currentKPIs.stockout_risk_customers}
         unit="/16"
         inverse={true}
-        icon="⚠️"
       />
       <KPICard
         title="Avg Lead Time"
@@ -108,7 +105,6 @@ export default function KPIStrip() {
         currentValue={currentKPIs.avg_lead_time}
         unit="d"
         inverse={true}
-        icon="⏱️"
       />
       <KPICard
         title="Cost Index"
@@ -116,7 +112,6 @@ export default function KPIStrip() {
         currentValue={currentKPIs.cost_index}
         unit=""
         inverse={true}
-        icon="💰"
       />
     </div>
   );
