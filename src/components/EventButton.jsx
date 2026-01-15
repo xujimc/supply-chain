@@ -8,7 +8,7 @@ export default function EventButton() {
     <button
       onClick={generateEvent}
       disabled={loading}
-      className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-semibold py-2 px-4 rounded text-sm transition-colors duration-200"
+      className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 disabled:bg-gray-600 text-white font-bold py-3 px-8 rounded-lg text-base shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 animate-pulse"
     >
       {loading ? 'Generating...' : 'Generate Event'}
     </button>
