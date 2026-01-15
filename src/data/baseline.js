@@ -3,41 +3,41 @@
 // 28 edges: supplier→factory(8), factory→warehouse(4), warehouse→customer(16)
 
 export const baselineNodes = [
-  // Suppliers (4)
-  { id: 'S1', type: 'supplier', region: 'APAC', risk_score: 0.2 },
-  { id: 'S2', type: 'supplier', region: 'APAC', risk_score: 0.3 },
-  { id: 'S3', type: 'supplier', region: 'EU', risk_score: 0.1 },
-  { id: 'S4', type: 'supplier', region: 'NA-WEST', risk_score: 0.15 },
+  // Suppliers (4) - with specific locations
+  { id: 'S1', type: 'supplier', region: 'APAC', country: 'China', city: 'Shanghai', risk_score: 0.2 },
+  { id: 'S2', type: 'supplier', region: 'APAC', country: 'China', city: 'Hong Kong', risk_score: 0.3 },
+  { id: 'S3', type: 'supplier', region: 'EU', country: 'Netherlands', city: 'Rotterdam', risk_score: 0.1 },
+  { id: 'S4', type: 'supplier', region: 'NA-WEST', country: 'USA', city: 'Seattle', risk_score: 0.15 },
 
-  // Factories (4) - each has capacity
-  { id: 'F1', type: 'factory', region: 'APAC', capacity: 1000, risk_score: 0.3 },
-  { id: 'F2', type: 'factory', region: 'APAC', capacity: 1200, risk_score: 0.25 },
-  { id: 'F3', type: 'factory', region: 'EU', capacity: 900, risk_score: 0.2 },
-  { id: 'F4', type: 'factory', region: 'NA-WEST', capacity: 1100, risk_score: 0.15 },
+  // Factories (4) - with specific locations and capacity
+  { id: 'F1', type: 'factory', region: 'APAC', country: 'China', city: 'Shenzhen', capacity: 1000, risk_score: 0.3 },
+  { id: 'F2', type: 'factory', region: 'APAC', country: 'Taiwan', city: 'Taipei', capacity: 1200, risk_score: 0.25 },
+  { id: 'F3', type: 'factory', region: 'EU', country: 'Germany', city: 'Hamburg', capacity: 900, risk_score: 0.2 },
+  { id: 'F4', type: 'factory', region: 'NA-WEST', country: 'USA', city: 'Los Angeles', capacity: 1100, risk_score: 0.15 },
 
-  // Warehouses (4) - each has inventory
-  { id: 'W1', type: 'warehouse', region: 'NA-WEST', inventory: 500, risk_score: 0.1 },
-  { id: 'W2', type: 'warehouse', region: 'NA-EAST', inventory: 600, risk_score: 0.1 },
-  { id: 'W3', type: 'warehouse', region: 'EU', inventory: 450, risk_score: 0.15 },
-  { id: 'W4', type: 'warehouse', region: 'APAC', inventory: 550, risk_score: 0.2 },
+  // Warehouses (4) - with specific locations and inventory
+  { id: 'W1', type: 'warehouse', region: 'NA-WEST', country: 'USA', city: 'San Francisco', inventory: 500, risk_score: 0.1 },
+  { id: 'W2', type: 'warehouse', region: 'NA-EAST', country: 'USA', city: 'New Jersey', inventory: 600, risk_score: 0.1 },
+  { id: 'W3', type: 'warehouse', region: 'EU', country: 'UK', city: 'London', inventory: 450, risk_score: 0.15 },
+  { id: 'W4', type: 'warehouse', region: 'APAC', country: 'Singapore', city: 'Singapore', inventory: 550, risk_score: 0.2 },
 
-  // Customers (16) - each has daily demand
-  { id: 'C1', type: 'customer', region: 'NA-WEST', daily_demand: 10 },
-  { id: 'C2', type: 'customer', region: 'NA-WEST', daily_demand: 12 },
-  { id: 'C3', type: 'customer', region: 'NA-WEST', daily_demand: 8 },
-  { id: 'C4', type: 'customer', region: 'NA-WEST', daily_demand: 15 },
-  { id: 'C5', type: 'customer', region: 'NA-EAST', daily_demand: 11 },
-  { id: 'C6', type: 'customer', region: 'NA-EAST', daily_demand: 9 },
-  { id: 'C7', type: 'customer', region: 'NA-EAST', daily_demand: 13 },
-  { id: 'C8', type: 'customer', region: 'NA-EAST', daily_demand: 10 },
-  { id: 'C9', type: 'customer', region: 'EU', daily_demand: 14 },
-  { id: 'C10', type: 'customer', region: 'EU', daily_demand: 10 },
-  { id: 'C11', type: 'customer', region: 'EU', daily_demand: 12 },
-  { id: 'C12', type: 'customer', region: 'EU', daily_demand: 11 },
-  { id: 'C13', type: 'customer', region: 'APAC', daily_demand: 9 },
-  { id: 'C14', type: 'customer', region: 'APAC', daily_demand: 13 },
-  { id: 'C15', type: 'customer', region: 'APAC', daily_demand: 10 },
-  { id: 'C16', type: 'customer', region: 'APAC', daily_demand: 12 },
+  // Customers (16) - with specific locations and daily demand
+  { id: 'C1', type: 'customer', region: 'NA-WEST', country: 'USA', city: 'San Francisco', daily_demand: 10 },
+  { id: 'C2', type: 'customer', region: 'NA-WEST', country: 'USA', city: 'Los Angeles', daily_demand: 12 },
+  { id: 'C3', type: 'customer', region: 'NA-WEST', country: 'USA', city: 'Seattle', daily_demand: 8 },
+  { id: 'C4', type: 'customer', region: 'NA-WEST', country: 'USA', city: 'Portland', daily_demand: 15 },
+  { id: 'C5', type: 'customer', region: 'NA-EAST', country: 'USA', city: 'New York', daily_demand: 11 },
+  { id: 'C6', type: 'customer', region: 'NA-EAST', country: 'USA', city: 'Boston', daily_demand: 9 },
+  { id: 'C7', type: 'customer', region: 'NA-EAST', country: 'USA', city: 'Miami', daily_demand: 13 },
+  { id: 'C8', type: 'customer', region: 'NA-EAST', country: 'USA', city: 'Washington DC', daily_demand: 10 },
+  { id: 'C9', type: 'customer', region: 'EU', country: 'UK', city: 'London', daily_demand: 14 },
+  { id: 'C10', type: 'customer', region: 'EU', country: 'Germany', city: 'Berlin', daily_demand: 10 },
+  { id: 'C11', type: 'customer', region: 'EU', country: 'France', city: 'Paris', daily_demand: 12 },
+  { id: 'C12', type: 'customer', region: 'EU', country: 'Spain', city: 'Madrid', daily_demand: 11 },
+  { id: 'C13', type: 'customer', region: 'APAC', country: 'Singapore', city: 'Singapore', daily_demand: 9 },
+  { id: 'C14', type: 'customer', region: 'APAC', country: 'Japan', city: 'Tokyo', daily_demand: 13 },
+  { id: 'C15', type: 'customer', region: 'APAC', country: 'South Korea', city: 'Seoul', daily_demand: 10 },
+  { id: 'C16', type: 'customer', region: 'APAC', country: 'Australia', city: 'Sydney', daily_demand: 12 },
 ];
 
 export const baselineEdges = [

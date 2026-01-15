@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { baselineNodes, baselineEdges } from '../data/baseline';
 
 // Local backend server URL
 const BACKEND_URL = 'http://localhost:3001/api';
@@ -104,17 +105,25 @@ export class BackboardClient {
       ? 'CRITICAL: Return ONLY valid JSON. No markdown code blocks, no backticks, no explanation text. ONLY the JSON object.\n\n'
       : '';
 
-    return `${strictPrefix}You are a supply chain reasoning assistant.
+    // Build supply chain topology description
+    const supplyChainTopology = this._buildSupplyChainContext();
 
-Here is a world event JSON:
+    return `${strictPrefix}You are a supply chain reasoning assistant with expertise in geopolitics and logistics.
+
+CURRENT SUPPLY CHAIN TOPOLOGY:
+${supplyChainTopology}
+
+WORLD EVENT:
 ${JSON.stringify(event, null, 2)}
 
-You must:
-1. Interpret how this event impacts the CURRENT supply chain
-2. Identify affected nodes and edges (use IDs like S1, F1, W1, C1, E_S1_F1)
-3. Propose parameter changes (lead time, cost, risk, capacity)
-4. Explain KPI direction changes
-5. Recommend 1-2 mitigation actions
+Your task:
+1. Analyze how this event impacts the supply chain based on GEOGRAPHY and ROUTES
+2. Identify which specific nodes/edges are affected (e.g., Shanghai suppliers, ocean routes through Taiwan Strait)
+3. Calculate realistic impact (lead time delays, cost increases, capacity reductions)
+4. Recommend 1-2 SPECIFIC mitigation actions using ALTERNATIVE GEOGRAPHICAL ROUTES or nodes
+   - Example: "Reroute from Shanghai (S1) to Rotterdam supplier (S3)"
+   - Example: "Shift production from Shenzhen factory (F1) to Hamburg factory (F3)"
+5. Explain KPI implications
 
 Return ONLY valid JSON matching this EXACT schema:
 {
@@ -165,6 +174,69 @@ Return ONLY valid JSON matching this EXACT schema:
 }
 
 Do not include extra text. Return ONLY the JSON object.`;
+  }
+
+  /**
+   * Build supply chain topology context with geographical information
+   */
+  _buildSupplyChainContext() {
+    // Group nodes by type
+    const suppliers = baselineNodes.filter(n => n.type === 'supplier');
+    const factories = baselineNodes.filter(n => n.type === 'factory');
+    const warehouses = baselineNodes.filter(n => n.type === 'warehouse');
+    const customers = baselineNodes.filter(n => n.type === 'customer');
+
+    let context = 'NODES:\n';
+
+    context += '\nSuppliers:\n';
+    suppliers.forEach(n => {
+      context += `  ${n.id}: ${n.city}, ${n.country} (${n.region})\n`;
+    });
+
+    context += '\nFactories:\n';
+    factories.forEach(n => {
+      context += `  ${n.id}: ${n.city}, ${n.country} (${n.region}) - Capacity: ${n.capacity}\n`;
+    });
+
+    context += '\nWarehouses:\n';
+    warehouses.forEach(n => {
+      context += `  ${n.id}: ${n.city}, ${n.country} (${n.region}) - Inventory: ${n.inventory}\n`;
+    });
+
+    context += '\nCustomers:\n';
+    customers.forEach(n => {
+      context += `  ${n.id}: ${n.city}, ${n.country} (${n.region}) - Demand: ${n.daily_demand}/day\n`;
+    });
+
+    context += '\nROUTES (EDGES):\n';
+
+    // Supplier -> Factory routes
+    const supplierToFactory = baselineEdges.filter(e => e.from.startsWith('S') && e.to.startsWith('F'));
+    context += '\nSupplier → Factory:\n';
+    supplierToFactory.forEach(e => {
+      const from = baselineNodes.find(n => n.id === e.from);
+      const to = baselineNodes.find(n => n.id === e.to);
+      context += `  ${e.id}: ${from.city} → ${to.city} (${e.mode}, ${e.lead_time_days}d, cost: ${e.cost_index})\n`;
+    });
+
+    // Factory -> Warehouse routes
+    const factoryToWarehouse = baselineEdges.filter(e => e.from.startsWith('F') && e.to.startsWith('W'));
+    context += '\nFactory → Warehouse:\n';
+    factoryToWarehouse.forEach(e => {
+      const from = baselineNodes.find(n => n.id === e.from);
+      const to = baselineNodes.find(n => n.id === e.to);
+      context += `  ${e.id}: ${from.city} → ${to.city} (${e.mode}, ${e.lead_time_days}d, cost: ${e.cost_index})\n`;
+    });
+
+    // Warehouse -> Customer routes (summarized to avoid too much text)
+    const warehouseToCustomer = baselineEdges.filter(e => e.from.startsWith('W') && e.to.startsWith('C'));
+    context += '\nWarehouse → Customer: (16 routes, all by TRUCK, 1-3 days)\n';
+    context += '  W1 (San Francisco) serves 4 customers in NA-WEST\n';
+    context += '  W2 (New Jersey) serves 4 customers in NA-EAST\n';
+    context += '  W3 (London) serves 4 customers in EU\n';
+    context += '  W4 (Singapore) serves 4 customers in APAC\n';
+
+    return context;
   }
 
   /**

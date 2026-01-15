@@ -69,9 +69,21 @@ function KPICard({ title, baselineValue, currentValue, unit, inverse = false, ic
 export default function KPIStrip() {
   const baselineKPIs = useStore(state => state.baselineKPIs);
   const currentKPIs = useStore(state => state.currentKPIs);
+  const recommendationsAccepted = useStore(state => state.recommendationsAccepted);
+  const [flashAnimation, setFlashAnimation] = useState(false);
+
+  useEffect(() => {
+    if (recommendationsAccepted) {
+      setFlashAnimation(true);
+      const timer = setTimeout(() => setFlashAnimation(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [recommendationsAccepted]);
 
   return (
-    <div className="grid grid-cols-4 gap-6 w-full">
+    <div className={`grid grid-cols-4 gap-6 w-full transition-all duration-500 ${
+      flashAnimation ? 'animate-pulse' : ''
+    }`}>
       <KPICard
         title="Service Level"
         baselineValue={baselineKPIs.service_level}

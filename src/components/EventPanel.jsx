@@ -5,6 +5,7 @@ export default function EventPanel() {
   const latestBackboardResponse = useStore(state => state.latestBackboardResponse);
   const acceptRecommendations = useStore(state => state.acceptRecommendations);
   const loading = useStore(state => state.loading);
+  const recommendationsAccepted = useStore(state => state.recommendationsAccepted);
 
   if (!latestEvent) {
     return (
@@ -71,8 +72,21 @@ export default function EventPanel() {
             </div>
           )}
 
+          {/* Success Message */}
+          {recommendationsAccepted && (
+            <div className="border-t-4 border-blue-500 pt-4 bg-blue-50 -mx-6 px-6 pb-6 animate-pulse">
+              <div className="flex items-center justify-center mb-2">
+                <span className="text-5xl mr-3">✅</span>
+                <h3 className="font-bold text-2xl text-blue-900">Recommendations Applied Successfully!</h3>
+              </div>
+              <p className="text-center text-blue-700 font-semibold text-lg">
+                Check the KPIs above - your supply chain is recovering!
+              </p>
+            </div>
+          )}
+
           {/* Recommendations */}
-          {latestBackboardResponse.recommendations && latestBackboardResponse.recommendations.length > 0 && (
+          {!recommendationsAccepted && latestBackboardResponse.recommendations && latestBackboardResponse.recommendations.length > 0 && (
             <div className="border-t-4 border-green-500 pt-4 bg-green-50 -mx-6 px-6 pb-6">
               <div className="flex items-center mb-3">
                 <span className="text-2xl mr-2">💡</span>
@@ -115,9 +129,21 @@ export default function EventPanel() {
 
               <button
                 onClick={acceptRecommendations}
-                className="mt-4 w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-4 px-6 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200 text-lg"
+                disabled={loading}
+                className={`mt-4 w-full font-bold py-4 px-6 rounded-xl shadow-lg transition-all duration-200 text-lg ${
+                  loading
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 transform hover:scale-105'
+                } text-white`}
               >
-                ✓ Accept All Recommendations
+                {loading ? (
+                  <span className="flex items-center justify-center">
+                    <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
+                    Applying Recommendations...
+                  </span>
+                ) : (
+                  '✓ Accept All Recommendations'
+                )}
               </button>
             </div>
           )}

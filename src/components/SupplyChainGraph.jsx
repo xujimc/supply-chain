@@ -43,9 +43,10 @@ function convertToReactFlow(graph) {
     // Spread horizontally within tier
     const tierCounts = { supplier: 4, factory: 4, warehouse: 4, customer: 16 };
     const tierIndex = graph.nodes.filter(n => n.type === node.type).indexOf(node);
-    const tierWidth = tierCounts[node.type] * 180;
-    const startX = (1200 - tierWidth) / 2; // Center the tier
-    const xPos = startX + (tierIndex * 180);
+    const nodeSpacing = 200; // Increased spacing for wider nodes
+    const tierWidth = tierCounts[node.type] * nodeSpacing;
+    const startX = (1400 - tierWidth) / 2; // Center the tier (increased canvas width)
+    const xPos = startX + (tierIndex * nodeSpacing);
 
     return {
       id: node.id,
@@ -56,7 +57,8 @@ function convertToReactFlow(graph) {
           <div className="text-center">
             <div className="text-2xl mb-1">{emoji}</div>
             <div className="font-bold text-sm">{node.id}</div>
-            <div className="text-xs capitalize">{node.type}</div>
+            <div className="text-xs font-semibold text-gray-700">{node.city}</div>
+            <div className="text-xs text-gray-500">{node.country}</div>
             {isAffected && <div className="text-xs text-red-600 font-bold mt-1">⚠️ DISRUPTED</div>}
           </div>
         ),
@@ -65,10 +67,11 @@ function convertToReactFlow(graph) {
         background: isAffected ? '#fee2e2' : NODE_COLORS[node.type] || '#cbd5e1',
         border: isAffected ? '4px solid #dc2626' : '3px solid #475569',
         borderRadius: '12px',
-        padding: '12px',
+        padding: '14px',
         color: '#1e293b',
         fontSize: '12px',
-        width: 140,
+        width: 160,
+        minHeight: 100,
         boxShadow: isAffected ? '0 8px 20px rgba(220, 38, 38, 0.4)' : '0 4px 6px rgba(0, 0, 0, 0.1)',
       },
     };

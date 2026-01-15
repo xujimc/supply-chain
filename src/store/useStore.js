@@ -28,6 +28,7 @@ const useStore = create((set, get) => ({
   // UI state
   loading: false,
   error: null,
+  recommendationsAccepted: false,
 
   // Initialize Backboard session
   initializeBackboard: async () => {
@@ -68,7 +69,7 @@ const useStore = create((set, get) => ({
     const state = get();
 
     try {
-      set({ loading: true, error: null });
+      set({ loading: true, error: null, recommendationsAccepted: false });
 
       // Generate event
       const event = generateWorldEvent(state.eventSeed);
@@ -124,25 +125,32 @@ const useStore = create((set, get) => ({
       return;
     }
 
+    set({ loading: true });
+
     // Collect all mutations from all recommendations
     const allMutations = state.latestBackboardResponse.recommendations.flatMap(
       rec => rec.mutations || []
     );
 
     if (allMutations.length === 0) {
+      set({ loading: false });
       return;
     }
 
-    // Apply all recommendation mutations
-    const newGraph = applyMutations(state.currentGraph, allMutations);
-    const newKPIs = computeKPIs(newGraph);
+    // Apply all recommendation mutations with slight delay for visual feedback
+    setTimeout(() => {
+      const newGraph = applyMutations(state.currentGraph, allMutations);
+      const newKPIs = computeKPIs(newGraph);
 
-    set({
-      currentGraph: newGraph,
-      currentKPIs: newKPIs,
-    });
+      set({
+        currentGraph: newGraph,
+        currentKPIs: newKPIs,
+        loading: false,
+        recommendationsAccepted: true,
+      });
 
-    console.log('Recommendations accepted. New KPIs:', newKPIs);
+      console.log('✅ Recommendations accepted! New KPIs:', newKPIs);
+    }, 500);
   },
 
   // Reset to baseline
@@ -154,6 +162,7 @@ const useStore = create((set, get) => ({
       latestBackboardResponse: null,
       eventSeed: 1,
       error: null,
+      recommendationsAccepted: false,
     });
   },
 }));
