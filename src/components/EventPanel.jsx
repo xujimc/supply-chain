@@ -73,21 +73,40 @@ export default function EventPanel() {
 
           {/* Recommendations */}
           {latestBackboardResponse.recommendations && latestBackboardResponse.recommendations.length > 0 && (
-            <div className="border-t pt-4">
-              <h3 className="font-semibold text-gray-900 mb-3">AI Recommendations</h3>
+            <div className="border-t-4 border-green-500 pt-4 bg-green-50 -mx-6 px-6 pb-6">
+              <div className="flex items-center mb-3">
+                <span className="text-2xl mr-2">💡</span>
+                <h3 className="font-bold text-lg text-green-900">AI-Powered Recommendations</h3>
+              </div>
               <div className="space-y-3">
                 {latestBackboardResponse.recommendations.map((rec, idx) => (
-                  <div key={rec.id || idx} className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                    <div className="font-medium text-sm text-blue-900 mb-1">
-                      {rec.action_type?.replace(/_/g, ' ') || 'Recommended Action'}
+                  <div key={rec.id || idx} className="bg-white border-2 border-green-300 rounded-xl p-4 shadow-md">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="font-bold text-base text-green-900">
+                        {idx + 1}. {rec.action_type?.replace(/_/g, ' ') || 'Recommended Action'}
+                      </div>
+                      <span className="text-green-600 text-xl">✓</span>
                     </div>
-                    <p className="text-xs text-gray-700 mb-2">{rec.rationale}</p>
+                    <p className="text-sm text-gray-700 mb-3">{rec.rationale}</p>
                     {rec.expected_impact && (
-                      <div className="text-xs text-gray-600">
-                        Expected: Service Level {rec.expected_impact.service_level_delta_pct > 0 ? '+' : ''}
-                        {rec.expected_impact.service_level_delta_pct}% |
-                        Cost {rec.expected_impact.cost_index_delta_pct > 0 ? '+' : ''}
-                        {rec.expected_impact.cost_index_delta_pct}%
+                      <div className="bg-green-100 rounded-lg p-3 space-y-1">
+                        <div className="text-xs font-semibold text-green-800 mb-1">Expected Impact:</div>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div className="flex items-center">
+                            <span className="mr-1">📈</span>
+                            <span className="text-green-700">
+                              Service: <strong>{rec.expected_impact.service_level_delta_pct > 0 ? '+' : ''}
+                              {rec.expected_impact.service_level_delta_pct}%</strong>
+                            </span>
+                          </div>
+                          <div className="flex items-center">
+                            <span className="mr-1">💰</span>
+                            <span className="text-green-700">
+                              Cost: <strong>{rec.expected_impact.cost_index_delta_pct > 0 ? '+' : ''}
+                              {rec.expected_impact.cost_index_delta_pct}%</strong>
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -96,9 +115,9 @@ export default function EventPanel() {
 
               <button
                 onClick={acceptRecommendations}
-                className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
+                className="mt-4 w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-4 px-6 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200 text-lg"
               >
-                Accept All Recommendations
+                ✓ Accept All Recommendations
               </button>
             </div>
           )}
